@@ -8,8 +8,14 @@ from utils import calculate_moving_averages
 
 st.title('AlphaTrack: Stock Price Tracker & Strategy Visualizer')
 
-# Sidebar inputs
-symbol = st.sidebar.text_input('Stock Symbol', 'RELIANCE.NS')
+sample_symbols = [
+    'RELIANCE.NS', 'TCS.NS', 'INFY.NS', 'HDFCBANK.NS', 'ICICIBANK.NS',
+    'AAPL', 'MSFT', 'GOOGL', 'TSLA', 'AMZN', 'META', 'NFLX', 'NVDA'
+]
+symbol = st.sidebar.selectbox('Stock Symbol (or type your own)', sample_symbols, index=0)
+custom_symbol = st.sidebar.text_input('Or enter a custom symbol', '')
+if custom_symbol.strip():
+    symbol = custom_symbol.strip()
 start_date = st.sidebar.date_input('Start Date', pd.to_datetime('2022-01-01'))
 end_date = st.sidebar.date_input('End Date', pd.to_datetime('today'))
 short_window = st.sidebar.number_input('Short MA Window', min_value=1, value=20)
@@ -55,8 +61,8 @@ if st.sidebar.button('Fetch & Analyze'):
             future_sells = sell_indices[sell_indices > buy_time]
             if len(future_sells) > 0:
                 sell_time = future_sells[0]
-                buy_price = data.loc[buy_time, 'Close']
-                sell_price = data.loc[sell_time, 'Close']
+                buy_price = float(data.loc[buy_time, 'Close'])
+                sell_price = float(data.loc[sell_time, 'Close'])
                 if sell_price > buy_price:
                     wins += 1
                 total += 1
