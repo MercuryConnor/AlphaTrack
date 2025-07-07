@@ -25,13 +25,26 @@ strategy_options = ['SMA Crossover', 'Bollinger Bands', 'RSI']
 strategy_choice = st.sidebar.selectbox('Select Strategy', strategy_options)
 
 
-short_window = st.sidebar.number_input('Short MA Window', min_value=1, value=20)
-long_window = st.sidebar.number_input('Long MA Window', min_value=2, value=50)
-bb_window = st.sidebar.number_input('BB Window', min_value=1, value=20)
-bb_num_std = st.sidebar.number_input('BB Num Std Dev', min_value=1.0, value=2.0)
-rsi_window = st.sidebar.number_input('RSI Window', min_value=1, value=14)
-rsi_overbought = st.sidebar.number_input('RSI Overbought', min_value=1, max_value=100, value=70)
-rsi_oversold = st.sidebar.number_input('RSI Oversold', min_value=1, max_value=100, value=30)
+# short_window = st.sidebar.number_input('Short MA Window', min_value=1, value=20)
+#long_window = st.sidebar.number_input('Long MA Window', min_value=2, value=50)
+#bb_window = st.sidebar.number_input('BB Window', min_value=1, value=20)
+#bb_num_std = st.sidebar.number_input('BB Num Std Dev', min_value=1.0, value=2.0)
+#rsi_window = st.sidebar.number_input('RSI Window', min_value=1, value=14)
+#rsi_overbought = st.sidebar.number_input('RSI Overbought', min_value=1, max_value=100, value=70)
+#rsi_oversold = st.sidebar.number_input('RSI Oversold', min_value=1, max_value=100, value=30)
+
+# Only show relevant parameter boxes
+short_window = long_window = bb_window = bb_num_std = rsi_window = rsi_overbought = rsi_oversold = None
+if strategy_choice == 'SMA Crossover':
+    short_window = st.sidebar.number_input('Short MA Window', min_value=1, value=20)
+    long_window = st.sidebar.number_input('Long MA Window', min_value=2, value=50)
+elif strategy_choice == 'Bollinger Bands':
+    bb_window = st.sidebar.number_input('BB Window', min_value=1, value=20)
+    bb_num_std = st.sidebar.number_input('BB Num Std Dev', min_value=1.0, value=2.0)
+elif strategy_choice == 'RSI':
+    rsi_window = st.sidebar.number_input('RSI Window', min_value=1, value=14)
+    rsi_overbought = st.sidebar.number_input('RSI Overbought', min_value=1, max_value=100, value=70)
+    rsi_oversold = st.sidebar.number_input('RSI Oversold', min_value=1, max_value=100, value=30)
 
 if st.sidebar.button('Fetch & Analyze'):
     data = yf.download(symbol, start=start_date, end=end_date)
@@ -45,9 +58,11 @@ if st.sidebar.button('Fetch & Analyze'):
             ax.plot(data.index, data['Close'], label='Close Price')
             ax.plot(data.index, data[f'SMA_{short_window}'], label=f'SMA {short_window}')
             ax.plot(data.index, data[f'SMA_{long_window}'], label=f'SMA {long_window}')
-            # Plot buy/sell signals
-            ax.plot(signals['Buy'].index, signals['Buy']['Close'], '^', markersize=10, color='g', label='Buy Signal')
-            ax.plot(signals['Sell'].index, signals['Sell']['Close'], 'v', markersize=10, color='r', label='Sell Signal')
+            # Plot buy/sell signals with custom colors
+            # Long Call (Buy): dark green, Short Call (Sell): light green, Long Put (Buy): dark red, Short Put (Sell): light red
+            # For all strategies, Buy = Long Call (dark green), Sell = Long Put (dark red)
+            ax.plot(signals['Buy'].index, signals['Buy']['Close'], '^', markersize=10, color='#006400', label='Long Call (Buy)')  # dark green
+            ax.plot(signals['Sell'].index, signals['Sell']['Close'], 'v', markersize=10, color='#8B0000', label='Long Put (Sell)')  # dark red
             ax.legend()
             st.pyplot(fig)
             # Basic performance
@@ -88,9 +103,10 @@ if st.sidebar.button('Fetch & Analyze'):
             ax.plot(data.index, signals['Upper'], label='Upper Band', linestyle='--', color='orange')
             ax.plot(data.index, signals['Lower'], label='Lower Band', linestyle='--', color='orange')
             ax.plot(data.index, signals['MA'], label=f'BB MA {bb_window}', linestyle=':', color='blue')
-            # Plot buy/sell signals
-            ax.plot(signals['Buy'].index, signals['Buy']['Close'], '^', markersize=10, color='g', label='Buy Signal')
-            ax.plot(signals['Sell'].index, signals['Sell']['Close'], 'v', markersize=10, color='r', label='Sell Signal')
+            # Plot buy/sell signals with custom colors
+            # For all strategies, Buy = Long Call (dark green), Sell = Long Put (dark red)
+            ax.plot(signals['Buy'].index, signals['Buy']['Close'], '^', markersize=10, color='#006400', label='Long Call (Buy)')  # dark green
+            ax.plot(signals['Sell'].index, signals['Sell']['Close'], 'v', markersize=10, color='#8B0000', label='Long Put (Sell)')  # dark red
             ax.legend()
             st.pyplot(fig)
             # Basic performance for BB
@@ -113,9 +129,10 @@ if st.sidebar.button('Fetch & Analyze'):
             ax2.plot(data.index, signals['RSI'], label='RSI', color='purple', alpha=0.5)
             ax2.axhline(rsi_overbought, color='red', linestyle='--', alpha=0.5, label='Overbought')
             ax2.axhline(rsi_oversold, color='green', linestyle='--', alpha=0.5, label='Oversold')
-            # Plot buy/sell signals
-            ax.plot(signals['Buy'].index, signals['Buy']['Close'], '^', markersize=10, color='g', label='Buy Signal')
-            ax.plot(signals['Sell'].index, signals['Sell']['Close'], 'v', markersize=10, color='r', label='Sell Signal')
+            # Plot buy/sell signals with custom colors
+            # For all strategies, Buy = Long Call (dark green), Sell = Long Put (dark red)
+            ax.plot(signals['Buy'].index, signals['Buy']['Close'], '^', markersize=10, color='#006400', label='Long Call (Buy)')  # dark green
+            ax.plot(signals['Sell'].index, signals['Sell']['Close'], 'v', markersize=10, color='#8B0000', label='Long Put (Sell)')  # dark red
             ax.legend(loc='upper left')
             ax2.legend(loc='upper right')
             st.pyplot(fig)
