@@ -1,5 +1,4 @@
 <div align="center">
-  <img src="https://raw.githubusercontent.com/MercuryConnor/AlphaTrack/main/logo.png" alt="AlphaTrack Logo" width="120"/>
   <h1>AlphaTrack</h1>
   <p><b>Stock Price Tracker & Trading Strategy Visualizer</b></p>
   <p>
