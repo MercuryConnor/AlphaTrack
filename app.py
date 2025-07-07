@@ -58,8 +58,8 @@ if st.sidebar.button('Fetch & Analyze'):
         total = 0
         for buy_time in buy_indices:
             # Find the first sell after this buy
-            future_sells = sell_indices[sell_indices > buy_time]
-            if len(future_sells) > 0:
+            future_sells = [s for s in sell_indices if s > buy_time]
+            if future_sells:
                 sell_time = future_sells[0]
                 buy_price = float(data.loc[buy_time, 'Close'])
                 sell_price = float(data.loc[sell_time, 'Close'])
