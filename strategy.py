@@ -1,3 +1,5 @@
+import pandas as pd
+
 def rsi_signals(data: pd.DataFrame, window: int = 14, overbought: float = 70, oversold: float = 30):
     delta = data['Close'].diff()
     gain = (delta.where(delta > 0, 0)).rolling(window=window, min_periods=1).mean()
